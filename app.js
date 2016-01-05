@@ -15,6 +15,33 @@ app.use(bodyParser.json());
 
 
 app.get('/search', function(req, res) {
+
+  if (!isValidRequest(req, res)) {
+    return;
+  }
+
+  sendRequest('search', api_key, req.query.text, function (err, url, places) {
+    var response = makeResponse(url, places);
+    res.send(response);
+  });
+
+});
+
+app.get('/autocomplete', function(req, res) {
+
+  if (!isValidRequest(req, res)) {
+    return;
+  }
+
+  sendRequest('autocomplete', api_key, req.query.text, function (err, url, places) {
+    var response = makeResponse(url, places);
+    res.send(response);
+  });
+
+});
+
+
+function isValidRequest(req, res) {
   /*
    token=<string>
    team_id=<string>
@@ -32,35 +59,46 @@ app.get('/search', function(req, res) {
 
   if(!req.query.hasOwnProperty('text')){
     res.statusCode = 400;
-    return res.send('Error 400: Post syntax incorrect.');
+    res.send('Error 400: Post syntax incorrect.');
+    return false;
   }
 
-  var url = 'https://search.mapzen.com/v1/search?api_key=' + api_key + '&' + req.query.text;
+  return true;
+}
+
+function sendRequest(endpoint, api_key, params, callback) {
+  var url = 'https://search.mapzen.com/v1/' + endpoint + '?api_key=' + api_key + '&' + params;
   console.log('url', url);
   request.get(url, function (err, results) {
-    console.log(err, results.body);
+    if (err) {
+      console.log(err);
+      callback(err);
+      return;
+    }
+
+    console.log(results.body);
 
     var places = JSON.parse(results.body);
-
-    var message = makeSearchLink(url);
-    message += makeMapLink(places);
-    message += makeResultList(places);
-
-    var response = {
-      "response_type": "in_channel",
-      "text": message,
-      "attachments": [
-        {
-          "text": JSON.stringify(places, null, 2),
-          "color": "#F78181"
-        }
-      ]
-    };
-
-    res.send(response);
+    callback(null, url, places);
   });
+}
 
-});
+function makeResponse(url, places) {
+  var message = makeSearchLink(url);
+  message += makeMapLink(places);
+  message += makeResultList(places);
+
+  return {
+    "response_type": "in_channel",
+    "text": message,
+    "attachments": [
+      {
+        "text": JSON.stringify(places, null, 2),
+        "color": "#F78181"
+      }
+    ]
+  };
+}
 
 function makeSearchLink(url) {
   return '<' + url + '| Click to see original query>\n';
@@ -74,6 +112,10 @@ function makeMapLink(places) {
 function makeResultList(places) {
   var message = '';
   var count = 0;
+
+  if (!places || !places.features || places.features.length === 0) {
+    return 'No results found';
+  }
 
   places.features.forEach(function (feature) {
     count++;
