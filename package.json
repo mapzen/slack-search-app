@@ -14,6 +14,7 @@
   "dependencies": {
     "body-parser": "^1.14.2",
     "express": "^4.13.3",
+    "repo-crawler": "^2.0.0",
     "request": "^2.67.0"
   }
 }
