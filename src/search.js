@@ -4,7 +4,7 @@ var makeResponse = require('./mapzenSearch').makeResponse;
 
 var api_key = process.env.SEARCH_API_KEY;
 
-module.exports.search = function (req, res) {
+module.exports = function (req, res) {
   if (!isValidRequest(req, res)) {
     return;
   }
