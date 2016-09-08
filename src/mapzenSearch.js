@@ -44,7 +44,8 @@ function sendRequest(endpoint, api_key, params, callback) {
 
 function makeResponse(url, places) {
   var message = makeSearchLink(url);
-  message += makeMapLink(places);
+  message += makeCompareLink(url);
+  //message += makeMapLink(places);
   message += makeResultList(places);
 
   return {
@@ -61,6 +62,12 @@ function makeResponse(url, places) {
 
 function makeSearchLink(url) {
   return '<' + url + '| Click to see original query>\n';
+}
+
+function makeCompareLink(url) {
+  var compareUrl = url.replace('https://search.mapzen.com', 'http://pelias.io/compare/#').replace('?', '%3F');
+
+  return '<' + compareUrl + '| Click to see in compare app>\n';
 }
 
 function makeMapLink(places) {
