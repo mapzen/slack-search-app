@@ -1,12 +1,11 @@
 FROM node:boron
 
-# Create app directory
-WORKDIR /usr/src/app
+# Where the app is built and run inside the docker fs
+ENV WORK=/opt/pelias
 
-# Install app dependencies
-RUN git clone 'https://github.com/mapzen/slack-search-app.git' '/usr/src/app/search-slackbot'
+WORKDIR ${WORK}
+ADD . ${WORK}
 
-WORKDIR /usr/src/app/search-slackbot
 RUN npm install
 
 ENV GITHUB_AUTH=0
