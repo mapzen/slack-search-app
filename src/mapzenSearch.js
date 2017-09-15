@@ -65,7 +65,7 @@ function makeSearchLink(url) {
 }
 
 function makeCompareLink(url) {
-  var compareUrl = url.replace('https://search.mapzen.com', 'http://pelias.io/compare/#').replace('?', '%3F');
+  var compareUrl = url.replace('https://search.mapzen.com', 'http://pelias.github.io/compare/#').replace('?', '%3F');
 
   return '<' + compareUrl + '| Click to see in compare app>\n';
 }
