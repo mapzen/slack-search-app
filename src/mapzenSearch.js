@@ -9,7 +9,7 @@ function isValidRequest(req, res) {
    channel_name=test
    user_id=<string>
    user_name=<string>
-   command=/mapzen_search
+   command=/pelias_search
    text=94070
    response_url=https://hooks.slack.com/commands/1234/5678
    */
@@ -25,8 +25,9 @@ function isValidRequest(req, res) {
   return true;
 }
 
-function sendRequest(endpoint, api_key, params, callback) {
-  var url = 'https://search.mapzen.com/v1/' + endpoint + '?api_key=' + api_key + '&' + params;
+function sendRequest(pelias_host, endpoint, api_key, params, callback) {
+  var url = pelias_host + endpoint + '?api_key=' + api_key + '&' + params;
+
   console.log('url', url);
   request.get(url, function (err, results) {
     if (err) {
@@ -42,9 +43,9 @@ function sendRequest(endpoint, api_key, params, callback) {
   });
 }
 
-function makeResponse(url, places) {
+function makeResponse(pelias_host, url, places) {
   var message = makeSearchLink(url);
-  message += makeCompareLink(url);
+  message += makeCompareLink(pelias_host, url);
   //message += makeMapLink(places);
   message += makeResultList(places);
 
@@ -64,8 +65,8 @@ function makeSearchLink(url) {
   return '<' + url + '| Click to see original query>\n';
 }
 
-function makeCompareLink(url) {
-  var compareUrl = url.replace('https://search.mapzen.com', 'http://pelias.github.io/compare/#').replace('?', '%3F');
+function makeCompareLink(pelias_host, url) {
+  var compareUrl = url.replace(pelias_host, 'http://pelias.github.io/compare/#').replace('?', '%3F');
 
   return '<' + compareUrl + '| Click to see in compare app>\n';
 }
