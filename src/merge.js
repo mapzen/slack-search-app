@@ -9,13 +9,16 @@ module.exports = function (req, res, ops) {
   var responseUrl = req.query.response_url;
   var str = '';
 
-  var proc = child_process.spawn('node', [
+  const args = [
     mergeModulePath,
     '--auth', githubAuthToken,
     '--org', ops.org,
     '--head', ops.head,
     '--base', ops.base
-  ]);
+  ];
+
+  console.log(args.join(' '));
+  var proc = child_process.spawn('node', args);
 
   proc.stdout.on('data', function (data) {
     console.log(data.toString());
