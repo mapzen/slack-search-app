@@ -11,6 +11,5 @@ RUN npm install
 ENV GITHUB_AUTH=0
 ENV SEARCH_API_KEY=pelias-xxxxxx
 
-
 EXPOSE 3000
 CMD [ "node", "app.js" ]
